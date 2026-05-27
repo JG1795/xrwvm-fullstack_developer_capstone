@@ -12,6 +12,7 @@ const PostReview = () => {
   const [year, setYear] = useState("");
   const [date, setDate] = useState("");
   const [carmodels, setCarmodels] = useState([]);
+  const [hasError, setHasError] = useState(false);
 
   let curr_url = window.location.href;
   let root_url = curr_url.substring(0,curr_url.indexOf("postreview"));
@@ -62,18 +63,21 @@ const PostReview = () => {
   }
 
   }
-  const get_dealer = async ()=>{
-    const res = await fetch(dealer_url, {
-      method: "GET"
-    });
-    const retobj = await res.json();
-    
-    if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      if(dealerobjs.length > 0)
-        setDealer(dealerobjs[0])
+
+
+    const get_dealer = async () => {
+    try {
+      const response = await fetch(dealer_url);
+      const data = await response.json();
+        if (data.status === 200 && data.dealer) {
+  setDealer(data.dealer);
+      } else {
+        setDealer(null);
+      }
+    } catch (error) {
+        setHasError(true);
     }
-  }
+  };
 
   const get_cars = async ()=>{
     const res = await fetch(carmodels_url, {
